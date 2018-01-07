@@ -1,0 +1,46 @@
+MODELO DE DATOS
+
+1) 
+Revisar db/schema.rb, db/structure.sql y college.sql
+
+2) 
+SELECT students.* 
+FROM students 
+INNER JOIN course_students ON students.id = course_students.student_id 
+WHERE course_students.course_id = 1
+
+3)
+SELECT AVG(score) as average, courses.name, students.first_name , students.last_name 
+FROM student_tests 
+INNER JOIN students ON students.id = student_tests.student_id 
+INNER JOIN tests ON tests.id = student_tests.test_id 
+INNER JOIN courses ON courses.id = tests.course_id 
+WHERE (courses.id = 1 and students.id = 1) 
+GROUP BY courses.name, students.first_name, students.last_name
+
+
+4)
+SELECT courses.name, AVG(score), students.first_name 
+FROM courses 
+INNER JOIN tests ON tests.course_id = courses.id 
+INNER JOIN student_tests ON student_tests.test_id = tests.id 
+INNER JOIN students ON students.id = student_tests.student_id 
+GROUP BY courses.name, students.first_name 
+ORDER BY students.first_name
+
+5)
+SELECT foo.first_name
+FROM (
+
+SELECT courses.name , COUNT(score < 5) as red ,AVG(score) as avg, students.first_name 
+FROM courses 
+INNER JOIN tests ON tests.course_id = courses.id 
+INNER JOIN student_tests ON student_tests.test_id = tests.id 
+INNER JOIN students ON students.id = student_tests.student_id 
+GROUP BY courses.name, students.first_name 
+ORDER BY students.first_name
+
+
+)
+  AS foo GROUP BY foo.avg, foo.name , foo.red ,foo.first_name HAVING (avg < 5 and red > 1)
+
